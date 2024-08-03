@@ -4,10 +4,10 @@ const { generateToken } = require("../utility/jwt");
 
 
 const signUp = asyncWrapper(async(req,res)=>{
-     const {email,password} = req.body;
-     if(!email || !password)
+     const {email,password,username} = req.body;
+     if(!email || !password || !username)
          throw new Error('Please provide require data');
-    const createNewUser = await userModel.create({email,password});
+    const createNewUser = await userModel.create({email,password,username});
     res.json({success: true,message: "user create successfully",User: createNewUser});
 });
 
