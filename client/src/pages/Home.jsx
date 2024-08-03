@@ -1,10 +1,10 @@
 import React from 'react'
-import { Button } from 'flowbite-react'
+import SignUp from './SignUp'
 
 export default function Home() {
   return (
     <div>
-      <Button>Click me</Button>
+      <SignUp/>
     </div>
   )
 }
