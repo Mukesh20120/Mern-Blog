@@ -24,7 +24,10 @@ const singIn = asyncWrapper(async(req,res)=>{
         throw new Error("Invalid password");
     }
     const token = generateToken({payload: {id: user._id}});
-    res.json({success: true,message: 'Login successfully',token});
+    const userData = {email: user.email,id: user._id};
+    res.status(200).cookie('access-token',token,{
+        httpOnly: true
+    }).json({success: true,message: 'login successfully',userData});
 })
 
 
