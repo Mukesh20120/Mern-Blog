@@ -8,10 +8,11 @@ const signUp = asyncWrapper(async (req, res) => {
   if (!email || !password || !username)
     throw new Error("Please provide require data");
   const createNewUser = await userModel.create({ email, password, username });
+  const {password: fetchedPassword,...userData} = createNewUser._doc;
   res.json({
     success: true,
     message: "user create successfully",
-    User: createNewUser,
+    userData
   });
 });
 
@@ -27,7 +28,7 @@ const singIn = asyncWrapper(async (req, res) => {
     throw new Error("Invalid password");
   }
   const token = generateToken({ payload: { id: user._id } });
-  const userData = { email: user.email, id: user._id };
+  const {password: fetchedPassword,...userData} = user._doc;
   res
     .status(200)
     .cookie("access-token", token, {
@@ -42,7 +43,7 @@ const googleAuth = asyncWrapper(async (req, res) => {
   const fetchUser = await userModel.findOne({ email });
   if (fetchUser) {
     const token = generateToken({ payload: { id: fetchUser._id } });
-    const userData = { email: fetchUser.email, id: fetchUser._id };
+    const {password: fetchedPassword,...userData} = fetchUser._doc;
     res
       .status(200)
       .cookie("access-token", token, {
@@ -62,7 +63,7 @@ const googleAuth = asyncWrapper(async (req, res) => {
     };
     const user = await userModel.create(newUser);
     const token = generateToken({ payload: { id: user._id } });
-    const userData = { email: user.email, id: user._id };
+    const {password: fetchedPassword,...userData} = user._doc;
     res
       .status(200)
       .cookie("access-token", token, {
