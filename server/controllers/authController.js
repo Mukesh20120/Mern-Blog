@@ -8,11 +8,11 @@ const signUp = asyncWrapper(async (req, res) => {
   if (!email || !password || !username)
     throw new Error("Please provide require data");
   const createNewUser = await userModel.create({ email, password, username });
-  const {password: fetchedPassword,...userData} = createNewUser._doc;
+  const { password: fetchedPassword, ...userData } = createNewUser._doc;
   res.json({
     success: true,
     message: "user create successfully",
-    userData
+    userData,
   });
 });
 
@@ -28,10 +28,10 @@ const singIn = asyncWrapper(async (req, res) => {
     throw new Error("Invalid password");
   }
   const token = generateToken({ payload: { id: user._id } });
-  const {password: fetchedPassword,...userData} = user._doc;
+  const { password: fetchedPassword, ...userData } = user._doc;
   res
     .status(200)
-    .cookie("access-token", token, {
+    .cookie("access_token", token, {
       httpOnly: true,
     })
     .json({ success: true, message: "login successfully", userData });
@@ -43,10 +43,10 @@ const googleAuth = asyncWrapper(async (req, res) => {
   const fetchUser = await userModel.findOne({ email });
   if (fetchUser) {
     const token = generateToken({ payload: { id: fetchUser._id } });
-    const {password: fetchedPassword,...userData} = fetchUser._doc;
+    const { password: fetchedPassword, ...userData } = fetchUser._doc;
     res
       .status(200)
-      .cookie("access-token", token, {
+      .cookie("access_token", token, {
         httpOnly: true,
       })
       .json({ success: true, message: "login successfully", userData });
@@ -63,14 +63,14 @@ const googleAuth = asyncWrapper(async (req, res) => {
     };
     const user = await userModel.create(newUser);
     const token = generateToken({ payload: { id: user._id } });
-    const {password: fetchedPassword,...userData} = user._doc;
+    const { password: fetchedPassword, ...userData } = user._doc;
     res
       .status(200)
-      .cookie("access-token", token, {
+      .cookie("access_token", token, {
         httpOnly: true,
       })
       .json({ success: true, message: "login successfully", userData });
   }
 });
 
-module.exports = { signUp, singIn, googleAuth};
+module.exports = { signUp, singIn, googleAuth };
