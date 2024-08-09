@@ -1,10 +1,14 @@
-import { Alert, Button, TextInput } from "flowbite-react";
+import { Alert, Button, TextInput, Modal, ModalBody } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 import {
   updateFailure,
   updateStart,
   updateSuccess,
+  deleteStart,
+  deleteSuccess,
+  deleteFailure,
 } from "../redux/user/userSlice";
 import {
   getDownloadURL,
@@ -19,15 +23,20 @@ import "react-circular-progressbar/dist/styles.css";
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
-  const [imageFileUrl, setImageFileUrl] = useState(null);
+  const [imageFileUrl, setImageFileUrl] = useState(
+    "https://images.thedirect.com/media/article_full/leveling1.jpg"
+  );
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
   const { loading, error: errorMessage } = useSelector((state) => state.user);
   const [updateSuccessMessage, setUpdateSuccessMessage] = useState(null);
   const [formData, setFormData] = useState({});
+  const [showModal, setShowModal] = useState(false);
+
   const filePickerRef = useRef();
   const dispatch = useDispatch();
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -35,6 +44,7 @@ export default function DashProfile() {
       setImageFileUrl(URL.createObjectURL(file));
     }
   };
+
   useEffect(() => {
     if (imageFile) {
       uploadImage();
@@ -57,9 +67,7 @@ export default function DashProfile() {
         setImageFileUploadProgress(progress.toFixed(0));
       },
       (error) => {
-        setImageFileUploadError(
-          error.message
-        );
+        setImageFileUploadError(error.message);
         setImageFileUploadProgress(null);
         setImageFile(null);
         setImageFileUrl(null);
@@ -74,10 +82,11 @@ export default function DashProfile() {
       }
     );
   };
+
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-  console.log(formData);
+
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     if (imageUploading) return;
@@ -100,6 +109,25 @@ export default function DashProfile() {
       dispatch(updateFailure(error.message));
     }
   };
+
+  const handleDeleteUser = async () => {
+    setShowModal(false);
+    try {
+      dispatch(deleteStart());
+      const res = await fetch(`/api/v1/user/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const fetchData = await res.json();
+      if (res.ok) {
+        dispatch(deleteSuccess());
+      } else {
+        dispatch(deleteFailure(fetchData.message));
+      }
+    } catch (error) {
+      dispatch(deleteFailure(error.message));
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
@@ -137,7 +165,7 @@ export default function DashProfile() {
             />
           )}
           <img
-            src={imageFileUrl || currentUser.imageUrl}
+            src={currentUser?.imageUrl || imageFileUrl}
             alt="user"
             className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
               imageFileUploadProgress &&
@@ -179,7 +207,9 @@ export default function DashProfile() {
         </Button>
       </form>
       <div className="text-red-500 flex justify-between mt-5">
-        <span className="cursor-pointer">Delete Account</span>
+        <span className="cursor-pointer" onClick={() => setShowModal(true)}>
+          Delete Account
+        </span>
         <span className="cursor-pointer">Sign Out</span>
       </div>
       {errorMessage && (
@@ -192,6 +222,30 @@ export default function DashProfile() {
           {updateSuccessMessage}
         </Alert>
       )}
+      <Modal
+        show={showModal}
+        popup
+        size="md"
+        onClose={() => setShowModal(false)}
+      >
+        <Modal.Header />
+        <ModalBody>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete your account?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={handleDeleteUser}>
+                Yes, I'm sure
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
     </div>
   );
 }
