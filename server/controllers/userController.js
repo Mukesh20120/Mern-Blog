@@ -33,4 +33,8 @@ const deleteUser = asyncWrapper(async (req, res) => {
   res.json({ success: true, message: "User delete successfully" });
 });
 
-module.exports = { updateUser, deleteUser };
+const signOut = asyncWrapper((req,res)=>{
+  return res.clearCookie().status(200).json({success: true,message: 'user sign out successfully'});
+})
+
+module.exports = { updateUser, deleteUser, signOut};

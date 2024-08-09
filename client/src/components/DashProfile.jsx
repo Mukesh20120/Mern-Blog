@@ -9,6 +9,7 @@ import {
   deleteStart,
   deleteSuccess,
   deleteFailure,
+  signOutSuccess,
 } from "../redux/user/userSlice";
 import {
   getDownloadURL,
@@ -107,6 +108,22 @@ export default function DashProfile() {
       }
     } catch (error) {
       dispatch(updateFailure(error.message));
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+       const res = await fetch('/api/v1/user/sign-out',{
+        method: 'POST'
+       })
+       const fetchData = await res.json();
+       if(res.ok){
+        dispatch(signOutSuccess());
+       }else{
+        window.alert('something went wrong',fetchData.message);
+       }
+    } catch (error) {
+      window.alert(error.message);
     }
   };
 
@@ -210,7 +227,9 @@ export default function DashProfile() {
         <span className="cursor-pointer" onClick={() => setShowModal(true)}>
           Delete Account
         </span>
-        <span className="cursor-pointer">Sign Out</span>
+        <span className="cursor-pointer" onClick={handleSignOut}>
+          Sign Out
+        </span>
       </div>
       {errorMessage && (
         <Alert color={"failure"} className=" mt-5">
