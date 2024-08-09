@@ -25,4 +25,12 @@ const updateUser = asyncWrapper(async (req, res) => {
   });
 });
 
-module.exports = { updateUser };
+const deleteUser = asyncWrapper(async (req, res) => {
+  const { userId } = req.params;
+  if (!userId || userId != req.payload?.id)
+    throw new Error("Deleting wrong user");
+  await userModel.findByIdAndDelete(userId);
+  res.json({ success: true, message: "User delete successfully" });
+});
+
+module.exports = { updateUser, deleteUser };

@@ -5,8 +5,11 @@ const morgan = require("morgan");
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const allErrorHandler = require("./middleware/allErrorHandling.js");
-const userRouter = require('./routers/userRouter.js');
 const notFound = require("./middleware/notFound.js");
+
+// Routers 
+const authRouter = require('./routers/authRouter.js');
+const userRouter = require('./routers/userRouter.js');
 
 dotenv.config();
 
@@ -19,7 +22,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(morgan('combined'));
 
-app.use('/api/v1/auth',userRouter);
+app.use('/api/v1/auth',authRouter);
+app.use('/api/v1/user',userRouter);
 
 app.use(allErrorHandler);
 app.use(notFound);
