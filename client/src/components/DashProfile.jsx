@@ -58,7 +58,7 @@ export default function DashProfile() {
       },
       (error) => {
         setImageFileUploadError(
-          "Could not upload image (File must be less than 2MB)"
+          error.message
         );
         setImageFileUploadProgress(null);
         setImageFile(null);
@@ -84,7 +84,7 @@ export default function DashProfile() {
     if (Object.keys(formData).length === 0) return;
     try {
       dispatch(updateStart());
-      const res = await fetch("api/v1/auth/user", {
+      const res = await fetch("api/v1/user", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
