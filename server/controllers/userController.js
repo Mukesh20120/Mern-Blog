@@ -20,7 +20,7 @@ const updateUser = asyncWrapper(async (req, res) => {
   const { password: newUpdatedPass, ...remainData } = fetchUser._doc;
   return res.json({
     success: true,
-    user: remainData,
+    userData: remainData,
     message: "user data update successfully",
   });
 });
