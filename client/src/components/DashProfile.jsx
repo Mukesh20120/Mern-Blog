@@ -20,6 +20,7 @@ import {
 import { app } from "../Firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { Link } from "react-router-dom";
 
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user);
@@ -113,15 +114,15 @@ export default function DashProfile() {
 
   const handleSignOut = async () => {
     try {
-       const res = await fetch('/api/v1/user/sign-out',{
-        method: 'POST'
-       })
-       const fetchData = await res.json();
-       if(res.ok){
+      const res = await fetch("/api/v1/user/sign-out", {
+        method: "POST",
+      });
+      const fetchData = await res.json();
+      if (res.ok) {
         dispatch(signOutSuccess());
-       }else{
-        window.alert('something went wrong '+fetchData.message);
-       }
+      } else {
+        window.alert("something went wrong " + fetchData.message);
+      }
     } catch (error) {
       window.alert(error.message);
     }
@@ -222,6 +223,17 @@ export default function DashProfile() {
         >
           {loading ? "Updating..." : "Update"}
         </Button>
+        {currentUser?.isAdmin && (
+          <Link to={"/create-post"}>
+            <Button
+              gradientDuoTone="purpleToBlue"
+              type="button"
+              className=" w-full"
+            >
+              Create Post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className="text-red-500 flex justify-between mt-5">
         <span className="cursor-pointer" onClick={() => setShowModal(true)}>
