@@ -21,7 +21,7 @@ export default function DashSidebar() {
        if(res.ok){
         dispatch(signOutSuccess());
        }else{
-        window.alert('something went wrong',fetchData.message);
+        window.alert('something went wrong ' + fetchData.message);
        }
     } catch (error) {
       window.alert(error.message);

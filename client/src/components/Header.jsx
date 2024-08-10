@@ -17,19 +17,19 @@ export default function Header() {
   const path = useLocation().pathname;
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
-  const {theme} = useSelector(state=>state.theme);
+  const { theme } = useSelector((state) => state.theme);
 
   const handleSignOut = async () => {
     try {
-       const res = await fetch('/api/v1/user/sign-out',{
-        method: 'POST'
-       })
-       const fetchData = await res.json();
-       if(res.ok){
+      const res = await fetch("/api/v1/user/sign-out", {
+        method: "POST",
+      });
+      const fetchData = await res.json();
+      if (res.ok) {
         dispatch(signOutSuccess());
-       }else{
-        window.alert('something went wrong',fetchData.message);
-       }
+      } else {
+        window.alert("something went wrong " + fetchData.message);
+      }
     } catch (error) {
       window.alert(error.message);
     }
@@ -63,7 +63,7 @@ export default function Header() {
           pill
           onClick={() => dispatch(toggleTheme())}
         >
-         { theme==='light'?<FaSun/>:<FaMoon />}
+          {theme === "light" ? <FaSun /> : <FaMoon />}
         </Button>
         {currentUser ? (
           <Dropdown
