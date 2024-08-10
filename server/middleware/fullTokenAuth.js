@@ -13,4 +13,10 @@ const verifyAuthentication = asyncWrapper((req, res, next) => {
   }
 });
 
-module.exports = { verifyAuthentication };
+const verifyIsAdmin = asyncWrapper((req,res,next)=>{
+  if(req.payload && req.payload.isAdmin)
+    next();
+  throw new Error('You are not authorize to access this api');
+})
+
+module.exports = { verifyAuthentication, verifyIsAdmin};

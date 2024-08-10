@@ -27,7 +27,7 @@ const singIn = asyncWrapper(async (req, res) => {
   if (!isValidPassword) {
     throw new Error("Invalid password");
   }
-  const token = generateToken({ payload: { id: user._id } });
+  const token = generateToken({ payload: { id: user._id,isAdmin: user.isAdmin} });
   const { password: fetchedPassword, ...userData } = user._doc;
   res
     .status(200)
@@ -42,7 +42,7 @@ const googleAuth = asyncWrapper(async (req, res) => {
   if (!email || !name) throw new Error("Invalid details provided");
   const fetchUser = await userModel.findOne({ email });
   if (fetchUser) {
-    const token = generateToken({ payload: { id: fetchUser._id } });
+    const token = generateToken({ payload: { id: fetchUser._id,isAdmin: fetchUser.isAdmin } });
     const { password: fetchedPassword, ...userData } = fetchUser._doc;
     res
       .status(200)
@@ -62,7 +62,7 @@ const googleAuth = asyncWrapper(async (req, res) => {
       imageUrl: googleImgUrl,
     };
     const user = await userModel.create(newUser);
-    const token = generateToken({ payload: { id: user._id } });
+    const token = generateToken({ payload: { id: user._id,isAdmin: user.isAdmin } });
     const { password: fetchedPassword, ...userData } = user._doc;
     res
       .status(200)
