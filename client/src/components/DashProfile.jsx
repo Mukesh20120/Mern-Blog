@@ -25,9 +25,7 @@ import { Link } from "react-router-dom";
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
-  const [imageFileUrl, setImageFileUrl] = useState(
-    "https://images.thedirect.com/media/article_full/leveling1.jpg"
-  );
+  const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
@@ -78,12 +76,17 @@ export default function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setImageFileUrl(downloadURL);
-          setFormData((prev) => ({ ...prev, imageUrl: downloadURL }));
           setImageUploading(false);
+          setImageFileUploadError(null);
+          setImageFile(null);
+          setImageUploading(false);
+          setImageFileUploadProgress(null);
+          setFormData((prev) => ({ ...prev, imageUrl: downloadURL }));
         });
       }
     );
   };
+  console.log(formData);
 
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -183,7 +186,7 @@ export default function DashProfile() {
             />
           )}
           <img
-            src={currentUser?.imageUrl || imageFileUrl}
+            src={imageFileUrl || currentUser?.imageUrl}
             alt="user"
             className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
               imageFileUploadProgress &&
