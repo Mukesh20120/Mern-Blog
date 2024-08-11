@@ -11,6 +11,7 @@ import "react-quill/dist/quill.snow.css";
 import { app } from "../Firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
   const [imageFile, setImageFile] = useState(null);
@@ -18,6 +19,9 @@ export default function CreatePost() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
   const [formData, setFormData] = useState({});
+  const [publishPostError, setPublishPostError] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleUploadImage = () => {
     if (!imageFile) {
@@ -30,12 +34,13 @@ export default function CreatePost() {
     const fileName = new Date().getTime() + imageFile.name;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
-    uploadTask.on("state_changed",
-       (snapShort) => {
-      const progress =
-        (snapShort.bytesTransferred * 100) / snapShort.totalBytes;
-      setUploadProgress(progress);
-       },
+    uploadTask.on(
+      "state_changed",
+      (snapShort) => {
+        const progress =
+          (snapShort.bytesTransferred * 100) / snapShort.totalBytes;
+        setUploadProgress(progress);
+      },
       (error) => {
         setUploadImageError(error.message);
         setImageFile(null);
@@ -52,12 +57,35 @@ export default function CreatePost() {
         });
       }
     );
-  }
- 
+  };
+
+  const handleOnSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/v1/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const fetchData = await res.json();
+      if (res.ok) {
+        console.log("publish successfully");
+        setFormData({});
+        navigate("/");
+      } else {
+        setPublishPostError(fetchData.message);
+      }
+    } catch (error) {
+      setPublishPostError(error.message);
+    }
+  };
+
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Create a post</h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleOnSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
             type="text"
@@ -65,12 +93,22 @@ export default function CreatePost() {
             required
             id="title"
             className="flex-1"
+            onChange={(e) =>
+              setFormData({ ...formData, [e.target.id]: e.target.value })
+            }
           />
-          <Select>
+          <Select
+            onSelect={(e) =>
+              setFormData({ ...formData, category: e.target.value })
+            }
+          >
             <option value="uncategorized">Select a category</option>
             <option value="javascript">JavaScript</option>
             <option value="reactjs">React.js</option>
-            <option value="nextjs">Next.js</option>
+            <option value="nodejs">Node.js</option>
+            <option value="coding">Leetcode</option>
+            <option value="book">Book</option>
+            <option value="other">other</option>
           </Select>
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
@@ -112,11 +150,13 @@ export default function CreatePost() {
           placeholder="Write something..."
           className="h-72 mb-12"
           required
+          onChange={(value) => setFormData({ ...formData, content: value })}
         />
         <Button type="submit" gradientDuoTone="purpleToPink">
           Publish
         </Button>
       </form>
+      {publishPostError && <Alert color="failure">{publishPostError}</Alert>}
     </div>
   );
 }
