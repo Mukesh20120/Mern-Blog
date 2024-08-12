@@ -1,4 +1,4 @@
-const { createPost } = require("../controllers/postController");
+const { createPost, getPosts } = require("../controllers/postController");
 const {
   verifyIsAdmin,
   verifyAuthentication,
@@ -7,5 +7,6 @@ const router = require("express").Router();
 
 router.use(verifyAuthentication);
 router.post("/", verifyIsAdmin, createPost);
+router.get("/", getPosts);
 
 module.exports = router;
