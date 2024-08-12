@@ -86,7 +86,7 @@ export default function DashProfile() {
       }
     );
   };
-  console.log(formData);
+
 
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
