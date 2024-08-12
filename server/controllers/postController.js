@@ -63,4 +63,13 @@ const getPosts = asyncWrapper(async (req, res) => {
   });
 });
 
-module.exports = { createPost,getPosts};
+const deletePost = asyncWrapper(async (req, res) => {
+  if (!req.payload.isAdmin || !req.query.userId === req.payload.id) {
+    throw new Error("You are not authorized to delete this post");
+  }
+
+  await PostModel.findByIdAndDelete(req.query.postId);
+  res.json({ success: true, message: "Post delete successfully" });
+});
+
+module.exports = { createPost, getPosts, deletePost };
