@@ -98,15 +98,16 @@ export default function CreatePost() {
             }
           />
           <Select
-            onSelect={(e) =>
-              setFormData({ ...formData, category: e.target.value })
-            }
+            onChange={(e) => {
+              console.log(e.target.value);
+              setFormData({ ...formData, category: e.target.value });
+            }}
           >
             <option value="uncategorized">Select a category</option>
             <option value="javascript">JavaScript</option>
             <option value="reactjs">React.js</option>
             <option value="nodejs">Node.js</option>
-            <option value="coding">Leetcode</option>
+            <option value="leetcode">Leetcode</option>
             <option value="book">Book</option>
             <option value="other">other</option>
           </Select>
