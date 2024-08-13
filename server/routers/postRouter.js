@@ -2,6 +2,7 @@ const {
   createPost,
   getPosts,
   deletePost,
+  updatePost,
 } = require("../controllers/postController");
 const {
   verifyIsAdmin,
@@ -14,6 +15,6 @@ router
   .route("/")
   .post(verifyIsAdmin, createPost)
   .get(getPosts)
-  .delete(verifyIsAdmin, deletePost);
+  .delete(verifyIsAdmin, deletePost).put(verifyIsAdmin, updatePost)
 
 module.exports = router;

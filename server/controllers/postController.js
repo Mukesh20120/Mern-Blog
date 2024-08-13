@@ -72,4 +72,30 @@ const deletePost = asyncWrapper(async (req, res) => {
   res.json({ success: true, message: "Post delete successfully" });
 });
 
-module.exports = { createPost, getPosts, deletePost };
+const updatePost = asyncWrapper(async (req, res) => {
+  if (!req.payload.isAdmin || !req.query.userId === req.payload.id) {
+    throw new Error("You are not authorized to delete this post");
+  }
+  if (!req.query.postId) {
+    throw new Error("Please provide require data");
+  }
+  const { postId } = req.query;
+  const { title, category, image, content } = req.body;
+  const updateData = {};
+  if (title) {
+    const slug = title
+      .split(" ")
+      .join("-")
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9-]/g, "");
+    updateData["title"] = title;
+    updateData["slug"] = slug;
+  }
+  if (content) updateData["content"] = content;
+  if (image) updateData["image"] = image;
+  if (category) updateData["category"] = category;
+  const updatedPost = await PostModel.findByIdAndUpdate(postId, updateData,{new: true});
+  res.json({success: true,message: 'Update successfully',posts: updatedPost});
+});
+
+module.exports = { createPost, getPosts, deletePost, updatePost };
