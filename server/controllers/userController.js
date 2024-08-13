@@ -27,14 +27,48 @@ const updateUser = asyncWrapper(async (req, res) => {
 
 const deleteUser = asyncWrapper(async (req, res) => {
   const { userId } = req.params;
-  if (!userId || userId != req.payload?.id)
-    throw new Error("Deleting wrong user");
   await userModel.findByIdAndDelete(userId);
   res.json({ success: true, message: "User delete successfully" });
 });
 
-const signOut = asyncWrapper((req,res)=>{
-  return res.clearCookie().status(200).json({success: true,message: 'user sign out successfully'});
-})
+const getUsers = asyncWrapper(async (req, res) => {
+  const startIndex = req.query.startIndex ? parseInt(req.query.startIndex) : 0;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 9;
+  const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
 
-module.exports = { updateUser, deleteUser, signOut};
+  const fetchUsers = await userModel
+    .find({})
+    .sort({ updatedAt: sortOrder })
+    .skip(startIndex)
+    .limit(limit);
+  const userWithOutPassword = fetchUsers.map((user) => {
+    const { password, ...res } = user._doc;
+    return res;
+  });
+  const totalUsers = await userModel.countDocuments();
+  const now = new Date();
+  const oneMonthAgo = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    now.getDate()
+  );
+  const lastMonthUsers = await userModel.countDocuments({
+    createdAt: { $gte: oneMonthAgo },
+  });
+  res.json({
+    success: true,
+    message: "fetch post successfully",
+    users: userWithOutPassword,
+    totalUsers,
+    lastMonthUsers,
+  });
+});
+
+const signOut = asyncWrapper((req, res) => {
+  return res
+    .clearCookie()
+    .status(200)
+    .json({ success: true, message: "user sign out successfully" });
+});
+
+module.exports = { updateUser, deleteUser, signOut, getUsers };
