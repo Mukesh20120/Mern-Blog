@@ -11,6 +11,7 @@ const notFound = require("./middleware/notFound.js");
 const authRouter = require('./routers/authRouter.js');
 const userRouter = require('./routers/userRouter.js');
 const postRouter = require('./routers/postRouter.js');
+const commentRouter = require('./routers/commentRouter.js');
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use(morgan('combined'));
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/user',userRouter);
 app.use('/api/v1/post',postRouter);
+app.use('/api/v1/comment',commentRouter);
 
 app.use(allErrorHandler);
 app.use(notFound);
