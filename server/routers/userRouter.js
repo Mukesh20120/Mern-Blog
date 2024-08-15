@@ -3,6 +3,7 @@ const {
   deleteUser,
   signOut,
   getUsers,
+  getSingleUser,
 } = require("../controllers/userController");
 const {
   verifyAuthentication,
@@ -16,5 +17,6 @@ router.use(verifyAuthentication);
 router.put("/", updateUser);
 router.delete("/:userId", deleteUser);
 router.get("/", verifyIsAdmin, getUsers);
+router.get("/get-user/:userId",verifyIsAdmin,getSingleUser)
 
 module.exports = router;

@@ -64,6 +64,16 @@ const getUsers = asyncWrapper(async (req, res) => {
   });
 });
 
+const getSingleUser = asyncWrapper(async(req,res)=>{
+  const {userId} = req.params;
+  if(!userId){
+    throw new Error('Not valid user Id.');
+  }
+  const fetchUser = await userModel.findById(userId);
+  const {password,...rest} = fetchUser._doc
+  res.json({success: true,message: "user fetch successfully",data: rest});
+})
+
 const signOut = asyncWrapper((req, res) => {
   return res
     .clearCookie()
@@ -71,4 +81,4 @@ const signOut = asyncWrapper((req, res) => {
     .json({ success: true, message: "user sign out successfully" });
 });
 
-module.exports = { updateUser, deleteUser, signOut, getUsers };
+module.exports = { updateUser, deleteUser, signOut, getUsers, getSingleUser };

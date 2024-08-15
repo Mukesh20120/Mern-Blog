@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const CommentSchema = mongoose.Schema(
   {
-    comment: { type: String, required: true },
+    content: { type: String, required: true },
     userId: { type: String, required: true },
     postId: { type: String, required: true },
     likes: { type: Array, default: [] },
