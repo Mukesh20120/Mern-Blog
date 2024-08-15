@@ -22,7 +22,6 @@ export default function SignUp() {
         body: JSON.stringify(userData),
       });
       const fetchData = await res.json();
-      console.log(fetchData);
       setLoading(false);
       if(fetchData.success === 'false'){
         setErrorMessage(fetchData.message);

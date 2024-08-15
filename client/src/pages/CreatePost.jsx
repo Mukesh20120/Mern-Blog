@@ -71,7 +71,6 @@ export default function CreatePost() {
       });
       const fetchData = await res.json();
       if (res.ok) {
-        console.log("publish successfully");
         setFormData({});
         navigate("/");
       } else {
@@ -99,7 +98,6 @@ export default function CreatePost() {
           />
           <Select
             onChange={(e) => {
-              console.log(e.target.value);
               setFormData({ ...formData, category: e.target.value });
             }}
           >

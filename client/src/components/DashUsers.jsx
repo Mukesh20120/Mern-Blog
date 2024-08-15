@@ -25,7 +25,7 @@ export default function DashUsers() {
           window.alert(data.message);
         }
       } catch (error) {
-        console.log(error.message);
+        window.alert(error.message);
       }
     };
     if (currentUser.isAdmin) {

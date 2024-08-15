@@ -7,6 +7,6 @@ const router = require('express').Router();
 router.use(verifyAuthentication)
 router.post('/',createComment);
 router.get('/:postId',getComments)
-router.get('/like-comment/:commentId', likeComment);
+router.put('/like-comment/:commentId', likeComment);
 
 module.exports = router;

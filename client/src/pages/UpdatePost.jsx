@@ -38,7 +38,7 @@ export default function UpdatePost() {
         } else {
           setPublishPostError(null);
           setFormData(data?.posts[0]);
-          console.log(data);
+        
         }
       } catch (error) {
         publishPostError(error.message);
@@ -98,7 +98,6 @@ export default function UpdatePost() {
       );
       const fetchData = await res.json();
       if (res.ok) {
-        console.log("update successfully");
         setFormData({});
         navigate("/");
       } else {

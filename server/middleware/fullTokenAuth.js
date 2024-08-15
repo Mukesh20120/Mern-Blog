@@ -15,12 +15,10 @@ const verifyAuthentication = asyncWrapper((req, res, next) => {
 
 const verifyIsAdmin = asyncWrapper((req, res, next) => {
   if (req.payload && req.payload.isAdmin) {
-    console.log("inside verify if statement");
     next();
   } else {
     throw new Error("You are not authorize to access this api");
   }
-  console.log("outside if statement");
 });
 
 module.exports = { verifyAuthentication, verifyIsAdmin };
