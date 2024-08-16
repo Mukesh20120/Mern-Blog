@@ -68,7 +68,13 @@ export default function CommentSection({ postId }) {
       window.alert(error.message);
     }
   };
-
+  const handleEdit = ({ comment, editContent }) => {
+    setAllComments(
+      allComments.map((c) =>
+        c._id == comment._id ? { ...c, content: editContent } : c
+      )
+    );
+  };
   useEffect(() => {
     const fetchAllComments = async () => {
       try {
@@ -147,7 +153,7 @@ export default function CommentSection({ postId }) {
             </div>
           </div>
           {allComments.map((comment) => (
-            <Comment key={comment._id} comment={comment} onLike={handleLikes} />
+            <Comment key={comment._id} comment={comment} onLike={handleLikes} onEdit={handleEdit} />
           ))}
         </>
       )}
