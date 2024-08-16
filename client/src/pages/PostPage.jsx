@@ -2,12 +2,14 @@ import { Button, Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CommentSection from "../components/CommentSection";
+import PostCard from "../components/PostCard";
 
 export default function PostPage() {
   const { postSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
+  const [recentPost, setRecentPost] = useState([]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -33,6 +35,21 @@ export default function PostPage() {
     fetchPost();
   }, [postSlug]);
 
+  useEffect(() => {
+    const fetchRecentPost = async () => {
+      try {
+        const res = await fetch("/api/v1/post?limit=3");
+        if (res.ok) {
+          const data = await res.json();
+          setRecentPost(data.posts);
+        }
+      } catch (error) {
+        window.alert(error.message);
+      }
+    };
+    fetchRecentPost();
+  }, []);
+
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -55,7 +72,7 @@ export default function PostPage() {
       <img
         src={post && post.image}
         alt={post && post.title}
-        className="mt-10 p-3 max-h-[600px] w-full object-cover"
+        className="mt-10 p-3 max-h-[500px] w-[90%] mx-auto object-cover"
       />
       <div className="flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs">
         <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>
@@ -68,7 +85,14 @@ export default function PostPage() {
         dangerouslySetInnerHTML={{ __html: post && post.content }}
       ></div>
       <div>
-        <CommentSection postId={post._id}/>
+        <CommentSection postId={post._id} />
+      </div>
+      <div className="flex flex-col justify-center items-center mb-5">
+        <h1 className="text-xl mt-5">Recent articles</h1>
+        <div className=" flex flex-wrap gap-5 mt-5 justify-center">
+          {recentPost &&
+            recentPost.map((post) => <PostCard key={post._id} post={post} />)}
+        </div>
       </div>
     </main>
   );
