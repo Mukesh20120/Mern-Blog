@@ -55,7 +55,7 @@ const editComment = asyncWrapper(async (req, res) => {
   }
   //allow to delete the comment writer and the admin
   if (comment.userId !== req.payload.id && !req.payload.isAdmin) {
-    throw new Error("You are not allowed to delete commit");
+    throw new Error("You are not allowed to edit this comment");
   }
   const editedComment = await commentModel.findByIdAndUpdate(
     commentId,
@@ -71,5 +71,24 @@ const editComment = asyncWrapper(async (req, res) => {
     data: editedComment,
   });
 });
+const deleteComment = asyncWrapper(async (req, res) => {
+  const { commentId } = req.params;
+  const comment = await commentModel.findById(commentId);
+  if (!comment) {
+    throw new Error("Comment not found.");
+  }
+  //allow to delete the comment writer and the admin
+  if (comment.userId !== req.payload.id && !req.payload.isAdmin) {
+    throw new Error("You are not allowed to delete comment");
+  }
+  const editedComment = await commentModel.findByIdAndDelete(
+    commentId
+  );
 
-module.exports = { createComment, getComments, likeComment, editComment };
+  res.json({
+    success: true,
+    message: "comment delete successfully",
+  });
+});
+
+module.exports = { createComment, getComments, likeComment, editComment, deleteComment};
