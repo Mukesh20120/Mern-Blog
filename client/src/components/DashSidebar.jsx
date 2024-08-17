@@ -56,6 +56,18 @@ export default function DashSidebar() {
             </Sidebar.Item>
           </Link>
           {currentUser?.isAdmin && (
+            <Link to={"/dashboard?tab=dashboard"}>
+              <Sidebar.Item
+                active={tab === "dashboard"}
+                icon={HiDocumentText}
+                labelColor="dark"
+                as="div"
+              >
+                Dashboard
+              </Sidebar.Item>
+            </Link>
+          )}
+          {currentUser?.isAdmin && (
             <Link to={"/dashboard?tab=posts"}>
               <Sidebar.Item
                 active={tab === "posts"}
