@@ -81,9 +81,7 @@ const deleteComment = asyncWrapper(async (req, res) => {
   if (comment.userId !== req.payload.id && !req.payload.isAdmin) {
     throw new Error("You are not allowed to delete comment");
   }
-  const editedComment = await commentModel.findByIdAndDelete(
-    commentId
-  );
+  await commentModel.findByIdAndDelete(commentId);
 
   res.json({
     success: true,
@@ -91,4 +89,43 @@ const deleteComment = asyncWrapper(async (req, res) => {
   });
 });
 
-module.exports = { createComment, getComments, likeComment, editComment, deleteComment};
+const getAllComment = asyncWrapper(async (req, res) => {
+  const startIndex = req.query.startIndex ? parseInt(req.query.startIndex) : 0;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 9;
+  const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
+  const findData = {
+    ...(req.query.userId && { userId: req.query.userId }),
+    ...(req.query.postId && { _id: req.query.postId }),
+  };
+  const comments = await commentModel
+    .find(findData)
+    .sort({ updatedAt: sortOrder })
+    .skip(startIndex)
+    .limit(limit);
+  const totalComments = await commentModel.countDocuments();
+  const now = new Date();
+  const oneMonthAgo = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    now.getDate()
+  );
+  const lastMonthComments = await commentModel.countDocuments({
+    createdAt: { $gte: oneMonthAgo },
+  });
+  res.json({
+    success: true,
+    message: "fetch post successfully",
+    comments,
+    totalComments,
+    lastMonthComments,
+  });
+});
+
+module.exports = {
+  createComment,
+  getComments,
+  likeComment,
+  editComment,
+  deleteComment,
+  getAllComment,
+};
