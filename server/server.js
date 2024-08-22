@@ -1,20 +1,20 @@
 const express = require("express");
-const dotenv = require('dotenv');
-const connect = require('./db/connect.js');
+const dotenv = require("dotenv");
+const connect = require("./db/connect.js");
 const morgan = require("morgan");
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const allErrorHandler = require("./middleware/allErrorHandling.js");
 const notFound = require("./middleware/notFound.js");
-const path = require('path');
+const path = require("path");
 
 const _dirPath = path.resolve();
 
-// Routers 
-const authRouter = require('./routers/authRouter.js');
-const userRouter = require('./routers/userRouter.js');
-const postRouter = require('./routers/postRouter.js');
-const commentRouter = require('./routers/commentRouter.js');
+// Routers
+const authRouter = require("./routers/authRouter.js");
+const userRouter = require("./routers/userRouter.js");
+const postRouter = require("./routers/postRouter.js");
+const commentRouter = require("./routers/commentRouter.js");
 
 dotenv.config();
 
@@ -25,32 +25,35 @@ const url = process.env.URL;
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
-app.use(morgan('combined'));
+app.use(morgan("combined"));
 
-app.use('/api/v1/auth',authRouter);
-app.use('/api/v1/user',userRouter);
-app.use('/api/v1/post',postRouter);
-app.use('/api/v1/comment',commentRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/post", postRouter);
+app.use("/api/v1/comment", commentRouter);
 
 app.use(allErrorHandler);
 app.use(notFound);
 
-app.use(express.static(path.join(__dirname, 'client/dist')));
+app.use(express.static(path.join(__dirname, "client/dist")));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
 
-const start = async()=>{
-    try{
-        await connect(url);
-        app.listen(port,()=>{
-            console.log('db connect successfully...');
-            console.log('Server is running...on port',port);
-        })
-    }catch(error){
-        console.log('Fail to start server',error.message);
-    }
-}
+app.use(allErrorHandler);
+app.use(notFound);
+
+const start = async () => {
+  try {
+    await connect(url);
+    app.listen(port, () => {
+      console.log("db connect successfully...");
+      console.log("Server is running...on port", port);
+    });
+  } catch (error) {
+    console.log("Fail to start server", error.message);
+  }
+};
 
 start();
