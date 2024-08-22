@@ -32,9 +32,6 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/comment", commentRouter);
 
-app.use(allErrorHandler);
-app.use(notFound);
-
 app.use(express.static(path.join(__dirname, "client/dist")));
 
 app.get("*", (req, res) => {
