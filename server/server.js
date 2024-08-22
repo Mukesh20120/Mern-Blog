@@ -6,6 +6,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const allErrorHandler = require("./middleware/allErrorHandling.js");
 const notFound = require("./middleware/notFound.js");
+const path = require('path');
+
+const _dirPath = path.resolve();
 
 // Routers 
 const authRouter = require('./routers/authRouter.js');
@@ -31,6 +34,12 @@ app.use('/api/v1/comment',commentRouter);
 
 app.use(allErrorHandler);
 app.use(notFound);
+
+app.use(express.static(path.join(__dirname, 'client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
 
 const start = async()=>{
     try{
